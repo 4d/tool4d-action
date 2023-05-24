@@ -53,6 +53,7 @@ runs:
         if [[ $RUNNER_OS == 'Windows' ]]; then
           project=$(echo "$project" | sed 's/^\.\///g')
           project=$(echo "$project" | sed 's/\//\\/g')
+          project="${{ github.workspace }}\\$project"
           echo "$project"
         fi
 
