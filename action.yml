@@ -32,7 +32,7 @@ runs:
           tool4d_bin=./tool4d.app/Contents/MacOS/tool4d
         elif [[ $RUNNER_OS == 'Windows' ]]; then
           curl https://resources-download.4d.com/release/20.x/20.0/latest/win/tool4d_v20.0_win.tar.xz -o tool4d.tar.xz -sL
-          tar xvJf tool4d.tar.xz -C tool4d
+          tar xvJf tool4d.tar.xz
           tool4d_bin=./tool4d/tool4d.exe
         else
           >&2 echo "Not supported runner OS $RUNNER_OS"
@@ -48,6 +48,7 @@ runs:
         if [[ "$project" == "*" ]]; then
           echo "🔎 Try to find 4DProject file in workspace"
           project=$(find . -name "*.4DProject" -not -path "./Components/*" | head -n 1)
+          echo "$project"
         fi
 
         echo "🚀 Run code"
@@ -55,12 +56,11 @@ runs:
         options="--dataless"
 
         startup_method=${{ inputs.startup-method }}
-        if [[ ! -z "$startup_method" ]]; then
-          options="$options --skip-onstartup --startup-method \"$startup_method\""
+        if [[ -z "$startup_method" ]]; then
+          "$tool4d_bin" --project "$project" $options
+        else
+          "$tool4d_bin" --project "$project" $options --skip-onstartup --startup-method x"$startup_method" # TODO: do only one call (but parsing failed of arg...)
         fi
-        echo "with options $options"
-
-        "$tool4d_bin" --project $project $options
         exit_code=$?
 
         if [ $exit_code -eq 0 ]; then
