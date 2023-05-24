@@ -51,8 +51,8 @@ runs:
           echo "$project"
         fi
         if [[ $RUNNER_OS == 'Windows' ]]; then
-          project=$(echo "$project" | sed 's/\//\\/g')
           project=$(echo "$project" | sed 's/^\.\///g')
+          project=$(echo "$project" | sed 's/\//\\/g')
           echo "$project"
         fi
 
