@@ -32,7 +32,7 @@ runs:
           tool4d_bin=./tool4d.app/Contents/MacOS/tool4d
         elif [[ $RUNNER_OS == 'Windows' ]]; then
           curl https://resources-download.4d.com/release/20.x/20.0/latest/win/tool4d_v20.0_win.tar.xz -o tool4d.tar.xz -sL
-          tar xvzf tool4d.tar.xz -C tool4d
+          tar xvJf tool4d.tar.xz -C tool4d
           tool4d_bin=./tool4d/tool4d.exe
         else
           >&2 echo "Not supported runner OS $RUNNER_OS"
