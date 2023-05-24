@@ -58,6 +58,7 @@ runs:
         if [[ ! -z "$startup_method" ]]; then
           options="$options --skip-onstartup --startup-method \"$startup_method\""
         fi
+        echo "with options $options"
 
         "$tool4d_bin" --project $project $options
         exit_code=$?
