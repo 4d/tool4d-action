@@ -1,0 +1,73 @@
+# action.yml
+name: 'Run tool4d!'
+author: 'Eric Marchand'
+branding:
+  icon: 'terminal'
+  color: 'blue'
+description: 'Run 4D code using tool4d'
+inputs:
+  project:
+    description: 'Project to run'
+    required: false
+  startup-method:
+    description: 'Startup method'
+    required: false
+outputs:
+  tool4d:
+    description: 'tool4d binary path.'
+    value: ${{ steps.tool4d.outputs.tool4d }}
+runs:
+  using: 'composite'
+  steps:
+    - id: tool4d
+      shell: bash
+      run: |
+        # TODO: allow to choose 4D version
+        # version=${{ inputs.version }}
+
+        echo "⬇️ Download tool4d"
+        if [[ $RUNNER_OS == 'macOS' ]]; then
+          curl https://resources-download.4d.com/release/20.x/20.0/latest/mac/tool4d_v20.0_mac_x86.tar.xz -o tool4d.tar.xz -s
+          tar xvzf tool4d.tar.xz
+          tool4d_bin=./tool4d.app/Contents/MacOS/tool4d
+        elif [[ $RUNNER_OS == 'Windows' ]]; then
+          curl https://resources-download.4d.com/release/20.x/20.0/latest/win/tool4d_v20.0_win.tar.xz -o tool4d.tar.xz -s
+          tar xvzf tool4d.tar.xz -C tool4d
+          tool4d_bin=./tool4d/tool4d.exe
+        else
+          >&2 echo "Not supported runner OS $RUNNER_OS"
+          exit 1
+        fi
+        echo "tool4d=$tool4d_bin" >> $GITHUB_OUTPUT
+
+        project=${{ inputs.project }}
+        if [[ -z "$project" ]]; then
+          echo "💡 Define a project to run or use `tool4d` binary"
+          exit 0
+        fi
+        if [[ "$project" == "*" ]]; then
+          echo "🔎 Try to find 4DProject file in workspace"
+          project=$(find . -name "*.4DProject" -not -path "./Components/*" | head -n 1)
+        fi
+
+        echo "🚀 Run code"
+
+        options="--dataless"
+
+        startup_method=${{ inputs.startup-method }}
+        if [[ ! -z "$startup_method" ]]; then
+          options="$options --skip-onstartup --startup-method \"$startup_method\""
+        fi
+
+        "$tool4d_bin" --project $project $options
+        exit_code=$?
+
+        if [ $exit_code -eq 0 ]; then
+          # chec error file flag 
+          # TODO: allow user to change flag path or expect 4d could quit with a specific exit code)
+          if [[ -f "error" ]]; then
+            exit 1
+          fi
+        else
+          exit $exit_code
+        fi
