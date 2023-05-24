@@ -47,8 +47,7 @@ runs:
         fi
         if [[ "$project" == "*" ]]; then
           echo "🔎 Try to find 4DProject file in workspace"
-          wd=$(pwd)
-          project=$(find $wd -name "*.4DProject" -not -path "./Components/*" | head -n 1)
+          project=$(find . -name "*.4DProject" -not -path "./Components/*" | head -n 1)
           echo "$project"
         fi
         if [[ $RUNNER_OS == 'Windows' ]]; then
