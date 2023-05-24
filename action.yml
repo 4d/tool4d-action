@@ -47,7 +47,8 @@ runs:
         fi
         if [[ "$project" == "*" ]]; then
           echo "🔎 Try to find 4DProject file in workspace"
-          project=$(find . -name "*.4DProject" -not -path "./Components/*" | head -n 1)
+          wd=$(pwd)
+          project=$(find $wd -f -name "*.4DProject" -not -path "./Components/*" | head -n 1)
           echo "$project"
         fi
 
@@ -59,7 +60,7 @@ runs:
         if [[ -z "$startup_method" ]]; then
           "$tool4d_bin" --project "$project" $options
         else
-          "$tool4d_bin" --project "$project" $options --skip-onstartup --startup-method x"$startup_method" # TODO: do only one call (but parsing failed of arg...)
+          "$tool4d_bin" --project "$project" $options --skip-onstartup --startup-method "$startup_method" # TODO: do only one call (but parsing failed of arg...)
         fi
         exit_code=$?
 
