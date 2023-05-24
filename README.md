@@ -25,7 +25,7 @@ tool4d binary path.
 
 ## Example usage
 
-Launch a specific method on macOS and windwow:
+Launch a specific method on macOS and windows:
 
 ```yaml
 
