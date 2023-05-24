@@ -48,7 +48,7 @@ runs:
         if [[ "$project" == "*" ]]; then
           echo "🔎 Try to find 4DProject file in workspace"
           wd=$(pwd)
-          project=$(find $wd -f -name "*.4DProject" -not -path "./Components/*" | head -n 1)
+          project=$(find $wd -name "*.4DProject" -not -path "./Components/*" | head -n 1)
           echo "$project"
         fi
 
