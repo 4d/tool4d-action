@@ -12,6 +12,15 @@ inputs:
   startup-method:
     description: 'Startup method'
     required: false
+  product_line:
+    description: 'tool4d product line (default 20.x)'
+    required: false
+  version:
+    description: 'tool4d version (default 20.0)'
+    required: false
+  build-method:
+    description: 'tool4d build number (default latest)'
+    required: false
 outputs:
   tool4d:
     description: 'tool4d binary path.'
@@ -23,15 +32,28 @@ runs:
       shell: bash
       run: |
         # TODO: allow to choose 4D version
-        # version=${{ inputs.version }}
+        product_line="${{ inputs.product-line }}"
+        version="${{ inputs.version }}"
+        build="${{ inputs.build }}"
+
+        if [[ -z "$product_line" ]]; then
+          product_line="20.x" # CLEAN: get somewhere online latest?
+        fi
+        if [[ -z "$version" ]]; then
+          version="20.0" # CLEAN: could warn if not correct according to product line
+        fi
+        if [[ -z "$build" ]]; then
+          build="latest"
+        fi
 
         echo "⬇️ Download tool4d"
         if [[ $RUNNER_OS == 'macOS' ]]; then
-          curl https://resources-download.4d.com/release/20.x/20.0/latest/mac/tool4d_v20.0_mac_x86.tar.xz -o tool4d.tar.xz -sL
+          # check arch? if github provide arm
+          curl "https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_v20.0_mac_x86.tar.xz" -o tool4d.tar.xz -sL
           tar xzf tool4d.tar.xz
           tool4d_bin=./tool4d.app/Contents/MacOS/tool4d
         elif [[ $RUNNER_OS == 'Windows' ]]; then
-          curl https://resources-download.4d.com/release/20.x/20.0/latest/win/tool4d_v20.0_win.tar.xz -o tool4d.tar.xz -sL
+          curl "https://resources-download.4d.com/release/$product_line/$version/$build/win/tool4d_v20.0_win.tar.xz" -o tool4d.tar.xz -sL
           tar xJf tool4d.tar.xz
           tool4d_bin=./tool4d/tool4d.exe
         else
@@ -40,7 +62,7 @@ runs:
         fi
         echo "tool4d=$tool4d_bin" >> $GITHUB_OUTPUT
 
-        project=${{ inputs.project }}
+        project="${{ inputs.project }}"
         if [[ -z "$project" ]]; then
           echo "💡 Define a project to run or use `tool4d` binary"
           exit 0
@@ -61,7 +83,7 @@ runs:
 
         options="--dataless"
 
-        startup_method=${{ inputs.startup-method }}
+        startup_method="${{ inputs.startup-method }}"
         if [[ -z "$startup_method" ]]; then
           "$tool4d_bin" --project "$project" $options
         else
