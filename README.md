@@ -6,14 +6,14 @@ This action install the wanted [tool4d](https://blog.4d.com/a-tool-for-4d-code-e
 
 ### Launch a project
 
-### `project` (v1)
+#### `project` (v1)
 
 **Optional** The project file to run.
 
 - If equal to `*` action will try to find it automatically
 - If empty, nothing is run
 
-### `startup-method` (v1)
+#### `startup-method` (v1)
 
 **Optional** The method to run at startup.
 
