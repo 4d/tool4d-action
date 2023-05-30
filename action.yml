@@ -12,7 +12,7 @@ inputs:
   startup-method:
     description: 'Startup method'
     required: false
-  product_line:
+  product-line:
     description: 'tool4d product line (default 20.x)'
     required: false
   version:
