@@ -62,7 +62,11 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
     - uses: e-marchand/tool4d-action@v1
+      with:
+        project: "*"
 ```
+
+> 💡 without `project` parameter no tool4d will be launch
 
 ### Choose default method to launch
 
@@ -82,6 +86,7 @@ jobs:
       uses: actions/checkout@v3
     - uses: e-marchand/tool4d-action@v1
       with:
+        project: "*"
         startup-method: runUnitTests
 ```
 
