@@ -97,7 +97,7 @@ runs:
 
         error_flag="${{ inputs.error-flag }}"
         if [[ -z "$error_flag" ]]; then
-          error_flag="error""
+          error_flag="error"
         fi
         if [ $exit_code -eq 0 ]; then
           # chec error file flag 
