@@ -32,10 +32,10 @@ runs:
   using: 'composite'
   steps:
     - id: download
-      run-name: ⬇️ Download tool4d
+      name: ⬇️ Download tool4d
       shell: bash
       run: ${GITHUB_ACTION_PATH}/download.sh "${{ inputs.product-line }}" "${{ inputs.version }}" "${{ inputs.build }}"
     - id: run
-      run-name: 🚀 Run code
+      name: 🚀 Run code
       shell: bash
       run: ${GITHUB_ACTION_PATH}/run.sh "${{ inputs.project }}" "${{ inputs.startup-method }}" "${{ inputs.error-flag }}" "${{ steps.download.outputs.tool4d }}"
