@@ -28,5 +28,5 @@ else
     >&2 echo "Not supported runner OS $RUNNER_OS"
     exit 1
 fi
-
+echo "$tool4d_bin"
 echo "tool4d=$tool4d_bin" >> $GITHUB_OUTPUT
