@@ -1,0 +1,45 @@
+# action.yml
+name: 'Run tool4d!'
+author: 'Eric Marchand'
+branding:
+  icon: 'terminal'
+  color: 'blue'
+description: 'Run 4D code using tool4d'
+inputs:
+  project:
+    description: 'Project to run (* to find it automatically)'
+    required: false
+  startup-method:
+    description: 'Startup method name (to replace database method)'
+    required: false
+  user-param:
+    description: 'user parameters'
+    required: false
+  error-flag:
+    description: 'path of file to check for errors (default "error")'
+    required: false
+  product-line:
+    description: 'tool4d product line (default 20.x)'
+    required: false
+  version:
+    description: 'tool4d version (default 20.0)'
+    required: false
+  build:
+    description: 'tool4d build number (default latest)'
+    required: false
+outputs:
+  tool4d:
+    description: 'tool4d binary path.'
+    value: ${{ steps.download.outputs.tool4d }}
+runs:
+  using: 'composite'
+  steps:
+    - id: download
+      name: ⬇️ Download tool4d
+      shell: bash
+      run: bash ${GITHUB_ACTION_PATH}/download.sh "${{ inputs.product-line }}" "${{ inputs.version }}" "${{ inputs.build }}"
+    - id: run
+      name: 🚀 Run code
+      shell: bash
+      run: |
+        bash ${GITHUB_ACTION_PATH}/run.sh "${{ inputs.project }}" "${{ inputs.startup-method }}" "${{ inputs.error-flag }}" "${{ steps.download.outputs.tool4d }}" '${{ inputs.user-param }}' "${{ github.workspace }}"
