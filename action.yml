@@ -33,7 +33,7 @@ runs:
   steps:
     - id: download
       shell: bash
-      run: download.sh "${{ inputs.product-line }}" "${{ inputs.version }}" "${{ inputs.build }}"
+      run: ${GITHUB_ACTION_PATH}/download.sh "${{ inputs.product-line }}" "${{ inputs.version }}" "${{ inputs.build }}"
     - id: run
       shell: bash
-      run: run.sh "${{ inputs.project }}" "${{ inputs.startup-method }}" "${{ inputs.error-flag }}" "${{ steps.download.outputs.tool4d }}"
+      run: ${GITHUB_ACTION_PATH}/run.sh "${{ inputs.project }}" "${{ inputs.startup-method }}" "${{ inputs.error-flag }}" "${{ steps.download.outputs.tool4d }}"
