@@ -7,10 +7,13 @@ branding:
 description: 'Run 4D code using tool4d'
 inputs:
   project:
-    description: 'Project to run'
+    description: 'Project to run (* to find it automatically)'
     required: false
   startup-method:
-    description: 'Startup method'
+    description: 'Startup method name (to replace database method)'
+    required: false
+  error-flag:
+    description: 'path of file to check for errors (default "error")'
     required: false
   product-line:
     description: 'tool4d product line (default 20.x)'
@@ -63,10 +66,11 @@ runs:
         echo "tool4d=$tool4d_bin" >> $GITHUB_OUTPUT
 
         project="${{ inputs.project }}"
-        if [[ -z "$project" ]]; then
-          echo "💡 Define a project to run or use `tool4d` binary"
+        if [[ -z "$project" ]]; then # TODO: instead create a new step with condition if:  github.event.inputs.project != ''
+          echo "💡 Define a project to run or use `tool4d` binary" 
           exit 0
         fi
+
         if [[ "$project" == "*" ]]; then
           echo "🔎 Try to find 4DProject file in workspace"
           project=$(find . -name "*.4DProject" -not -path "./Components/*" | head -n 1)
@@ -91,10 +95,14 @@ runs:
         fi
         exit_code=$?
 
+        error_flag="${{ inputs.error-flag }}"
+        if [[ -z "$error_flag" ]]; then
+          error_flag="error""
+        fi
         if [ $exit_code -eq 0 ]; then
           # chec error file flag 
           # TODO: allow user to change flag path or expect 4d could quit with a specific exit code)
-          if [[ -f "error" ]]; then
+          if [[ -f "$error_flag" ]]; then
             exit 1
           fi
         else
