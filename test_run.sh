@@ -79,16 +79,18 @@ else
     finalstatus=1
 fi
 
-echo ""
-project=".\\"$project_relative
-echo "🏃 Run $project"
-$SCRIPT_DIR/run.sh "$project" "$startup_method" "$error_flag" "$tool4d_bin" "$user_param" "$workspace"
-status=$?
-if [[ "$status" -eq 0 ]]; then
-    echo "✅ Run ok"
-else
-    >&2 echo "❌ Failed to run"
-    finalstatus=1
+if [[ $RUNNER_OS == 'Windows' ]]; then
+    echo ""
+    project=".\\"$project_relative
+    echo "🏃 Run $project"
+    $SCRIPT_DIR/run.sh "$project" "$startup_method" "$error_flag" "$tool4d_bin" "$user_param" "$workspace"
+    status=$?
+    if [[ "$status" -eq 0 ]]; then
+        echo "✅ Run ok"
+    else
+        >&2 echo "❌ Failed to run"
+        finalstatus=1
+    fi
 fi
 
 exit $finalstatus
