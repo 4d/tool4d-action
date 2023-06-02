@@ -13,20 +13,46 @@ fi
 if [[ -z "$build" ]]; then
     build="latest"
 fi
+if [[ -z "$RUNNER_OS" ]]; then
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        RUNNER_OS="macOS"
+    elif [ "$OSTYPE" == "cygwin" ] || [ "$OSTYPE" == "msys" ] || [ "$OSTYPE" == "win32" ] ; then
+        RUNNER_OS="Windows"
+    fi
+fi
 
-echo "⬇️ Download tool4d"
 if [[ $RUNNER_OS == 'macOS' ]]; then
     # check arch? if github provide arm
-    curl "https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_v20.0_mac_x86.tar.xz" -o tool4d.tar.xz -sL
-    tar xzf tool4d.tar.xz
+    url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_v20.0_mac_x86.tar.xz"
+    option=xzf # xJf ?
     tool4d_bin=./tool4d.app/Contents/MacOS/tool4d
 elif [[ $RUNNER_OS == 'Windows' ]]; then
-    curl "https://resources-download.4d.com/release/$product_line/$version/$build/win/tool4d_v20.0_win.tar.xz" -o tool4d.tar.xz -sL
-    tar xJf tool4d.tar.xz
+    url="https://resources-download.4d.com/release/$product_line/$version/$build/win/tool4d_v20.0_win.tar.xz"
+    option=xJf
     tool4d_bin=./tool4d/tool4d.exe
 else
-    >&2 echo "Not supported runner OS $RUNNER_OS"
+    >&2 echo "❌ Not supported runner OS: $RUNNER_OS"
     exit 1
 fi
-echo "$tool4d_bin"
-echo "tool4d=$tool4d_bin" >> $GITHUB_OUTPUT
+
+echo "⬇️  Download tool4d fom $url" 
+curl "$url" -o tool4d.tar.xz -sL
+status=$?
+if [[ "$status" -eq 0 ]]; then
+    echo "📦 Unpack"
+    tar $option tool4d.tar.xz
+else
+    >&2 echo "❌ Failed to download with status $status"
+    exit 2
+fi
+
+if  [[ -f "$tool4d_bin" ]]; then
+    echo "🎉 Downloaded successfully into $tool4d_bin"
+    if [[ ! -z "$GITHUB_OUTPUT" ]]; then
+        echo "tool4d=$tool4d_bin" >> $GITHUB_OUTPUT
+    fi
+else
+    >&2 echo "❌ Failed to unpack tool4d"
+    exit 3
+fi
+
