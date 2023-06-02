@@ -24,6 +24,14 @@ if [[ $RUNNER_OS == 'Windows' ]]; then
     echo "$project"
 fi
 
+if [[ -z "$error_flag" ]]; then
+    error_flag="error"
+fi
+
+if [[ -f "$error_flag" ]]; then
+    rm "$error_flag"
+fi
+
 echo "🚀 Run code"
 
 options="--dataless"
@@ -38,14 +46,12 @@ else
 fi
 exit_code=$?
 
-if [[ -z "$error_flag" ]]; then
-    error_flag="error"
-fi
+
 if [ $exit_code -eq 0 ]; then
-    # chec error file flag 
-    # TODO: allow user to change flag path or expect 4d could quit with a specific exit code)
+    # check error flag file
+    # CLEAN: expect 4d could quit with a specific exit code instead
     if [[ -f "$error_flag" ]]; then
-    exit 1
+        exit 1
     fi
 else
     exit $exit_code
