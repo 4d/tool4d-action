@@ -8,7 +8,7 @@ user_param="$5"
 workspace="$6"
 
 if [[ -z "$project" ]]; then # TODO: instead create a new step with condition if:  github.event.inputs.project != ''
-    echo "💡 Define a project to run or use `tool4d` binary" 
+    echo "💡 Define a project to run or use tool4d binary" 
     exit 0
 fi
 
@@ -18,10 +18,19 @@ if [[ "$project" == "*" ]]; then
     echo "$project"
 fi
 if [[ $RUNNER_OS == 'Windows' ]]; then
+    # 4d need full path
     project=$(echo "$project" | sed 's/^\.\///g')
     project=$(echo "$project" | sed 's/\//\\/g')
-    project="$workspace\\$project"
-    echo "$project"
+    if [[ "$project" != *":"* ]]; then
+        workspace=$(echo "$workspace" | sed 's:\\*$::')
+        project="$workspace\\$project"
+    fi
+    echo "🪟  $project"
+fi
+
+if  [[ ! -f "$project" ]]; then
+    >&2 echo "❌ project $project seems to not exist and could not be run"
+    exit 1
 fi
 
 if [[ -z "$error_flag" ]]; then
