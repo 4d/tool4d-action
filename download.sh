@@ -4,15 +4,37 @@ product_line="$1"
 version="$2"
 build="$3"
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+CONFIG_FILE="$SCRIPT_DIR/config.yml"
+
+if [ -z "$product_line" ] || [ -z "$version" ] || [ -z "$build" ]; then
+    echo "test"
+
+    curl -sfL https://raw.githubusercontent.com/e-marchand/tool4d-action/main/config.yml -o "dlconfig.yml"
+   
+    if [ -f "dlconfig.yml" ]; then
+        yq v  "dlconfig.yml"
+        if [[ "$?" -eq "0" ]]; then
+            CONFIG_FILE="dlconfig.yml"
+        fi
+    fi
+fi
+
 if [[ -z "$product_line" ]]; then
-    product_line="20.x" # CLEAN: get somewhere online latest?
+    product_line=$(cat $CONFIG_FILE | yq ".product-line")
 fi
 if [[ -z "$version" ]]; then
-    version="20.0" # CLEAN: could warn if not correct according to product line
+    version=$(cat $CONFIG_FILE | yq ".version")
 fi
 if [[ -z "$build" ]]; then
-    build="latest"
+    build=$(cat $CONFIG_FILE | yq ".build")
 fi
+
+if [[ "$build" == "official" ]]; then
+    build=$(cat $CONFIG_FILE | yq ".official")
+fi
+
+# fill RUNNER OS to test locally
 if [[ -z "$RUNNER_OS" ]]; then
     if [[ "$OSTYPE" == "darwin"* ]]; then
         RUNNER_OS="macOS"
