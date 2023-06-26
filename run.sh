@@ -17,16 +17,6 @@ if [[ "$project" == "*" ]]; then
     project=$(find . -name "*.4DProject" -not -path "./Components/*" | head -n 1)
     echo "$project"
 fi
-if [[ $RUNNER_OS == 'Windows' ]]; then
-    # 4d need full path
-    project=$(echo "$project" | sed 's/^\.\///g')
-    project=$(echo "$project" | sed 's/\//\\/g')
-    if [[ "$project" != *":"* ]]; then
-        workspace=$(echo "$workspace" | sed 's:\\*$::')
-        project="$workspace\\$project"
-    fi
-    echo "🪟  $project"
-fi
 
 if  [[ ! -f "$project" ]]; then
     >&2 echo "❌ project $project seems to not exist and could not be run"
