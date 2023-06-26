@@ -51,6 +51,8 @@ if  [[ -f "$tool4d_bin" ]]; then
     if [[ ! -z "$GITHUB_OUTPUT" ]]; then
         echo "tool4d=$tool4d_bin" >> $GITHUB_OUTPUT
     fi
+
+    "$tool4d_bin" --version
 else
     >&2 echo "❌ Failed to unpack tool4d"
     exit 3
