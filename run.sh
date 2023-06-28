@@ -44,9 +44,8 @@ else
     "$tool4d_bin" --project "$project" $options --user-param "$user_param" --skip-onstartup --startup-method "$startup_method" # TODO: do only one call (but parsing failed of arg...)
 fi
 exit_code=$?
-if [[ "$RUNNER_DEBUG" -eq 1 ]]; then
-   echo "tool4d exit code $exit_code"
-fi
+
+echo "...end running code ($exit_code)"
 
 if [ $exit_code -eq 0 ]; then
     # check error flag file
