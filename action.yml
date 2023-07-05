@@ -19,10 +19,10 @@ inputs:
     description: 'path of file to check for errors (default "error")'
     required: false
   product-line:
-    description: 'tool4d product line (default 20.x)'
+    description: 'tool4d product line'
     required: false
   version:
-    description: 'tool4d version (default 20.0)'
+    description: 'tool4d version'
     required: false
   build:
     description: 'tool4d build number (default latest)'

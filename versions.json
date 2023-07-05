@@ -1,0 +1,22 @@
+{
+  "default": {
+    "product_line": "20.x",
+    "version": "20",
+    "build": "latest"
+  },
+  "official": {
+    "20.x": {
+      "20": "100404"
+    },
+    "20Rx": {
+      "20R2": {
+        "product_line": "main",
+        "version": "main",
+        "build": "286970"
+      }
+    },
+    "main": {
+      "main": "286970"
+    }
+  }
+}
