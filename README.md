@@ -100,7 +100,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - uses: e-marchand/tool4d-action@v1
+    - uses: 4d/tool4d-action@v1
       with:
         project: "*"
         startup-method: runUnitTests
@@ -135,7 +135,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - uses: e-marchand/tool4d-action@v1
+    - uses: 4d/tool4d-action@v1
       id: tool4d
       with:
         project: ${{ github.workspace }}/Project/Build4D_DF.4DProject
