@@ -4,14 +4,17 @@ product_line="$1"
 version="$2"
 build="$3"
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+VERSION_FILE="$SCRIPT_DIR/versions.json"
+
 if [[ -z "$product_line" ]]; then
-    product_line=$(jq -r .default.product_line versions.json)
+    product_line=$(jq -r .default.product_line "$VERSION_FILE")
 fi
 if [[ -z "$version" ]]; then
-    version=$(jq -r .default.version versions.json)
+    version=$(jq -r .default.version "$VERSION_FILE")
 fi
 if [[ -z "$build" ]]; then
-    build=$(jq -r .default.build versions.json)
+    build=$(jq -r .default.build "$VERSION_FILE")
 fi
 
 if [[ "$product_line" == "vcs" ]] || [[ "$version" == "vcs" ]]; then
@@ -34,15 +37,15 @@ if [[ "$product_line" == "vcs" ]] || [[ "$version" == "vcs" ]]; then
 fi
 
 if [[ "$build" == "official" ]]; then
-    build=$(jq -r '.official."'$product_line'"."'$version'"|type=="object"' versions.json)
+    build=$(jq -r '.official."'$product_line'"."'$version'"|type=="object"' "$VERSION_FILE")
     if [ "$build" == "true" ]; then
-        new_product_line=$(jq -r '.official."'$product_line'"."'$version'".product_line' versions.json)
-        new_version=$(jq -r '.official."'$product_line'"."'$version'".version' versions.json)
-        build=$(jq -r '.official."'$product_line'"."'$version'".build' versions.json)
+        new_product_line=$(jq -r '.official."'$product_line'"."'$version'".product_line' "$VERSION_FILE")
+        new_version=$(jq -r '.official."'$product_line'"."'$version'".version' "$VERSION_FILE")
+        build=$(jq -r '.official."'$product_line'"."'$version'".build' "$VERSION_FILE")
         product_line=$new_product_line
         version=$new_version
     else
-        build=$(jq -r '.official."'$product_line'"."'$version'"' versions.json)
+        build=$(jq -r '.official."'$product_line'"."'$version'"' "$VERSION_FILE")
     fi
 
     if [[ "$build" == "null" ]]; then
@@ -131,7 +134,7 @@ fi
 if  [[ -f "$tool4d_bin" ]]; then
     echo "🎉 Downloaded successfully into $tool4d_bin"
     if [[ ! -z "$GITHUB_OUTPUT" ]]; then
-        echo "tool4d=$tool4d_bin" >> $GITHUB_OUTPUT
+        echo "tool4d=$tool4d_bin" >> "$GITHUB_OUTPUT"
     fi
 
     "$tool4d_bin" --version
