@@ -31,6 +31,11 @@ if [[ -f "$error_flag" ]]; then
     rm "$error_flag"
 fi
 
+if [[ $RUNNER_OS == 'Windows' ]]; then
+    project=$(echo "$project" | sed 's/\//\\/g')
+    echo "🪟  $project"
+fi
+
 echo "🚀 Run code"
 
 options="--dataless"
