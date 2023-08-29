@@ -37,7 +37,13 @@ if [[ "$product_line" == "vcs" ]] || [[ "$version" == "vcs" ]]; then
     fi
 fi
 
+#echo "version=$version"
+#echo "product_line=$product_line"
+
 if [[ "$build" == "official" ]]; then
+
+    curl -sL -f https://raw.githubusercontent.com/4d/tool4d-action/main/versions.json -o "$VERSION_FILE" 2>/dev/null || true
+
     build=$(jq -r '.official."'$product_line'"."'$version'"|type=="object"' "$VERSION_FILE")
     if [ "$build" == "true" ]; then
         new_product_line=$(jq -r '.official."'$product_line'"."'$version'".product_line' "$VERSION_FILE")
@@ -54,6 +60,13 @@ if [[ "$build" == "official" ]]; then
         >&2 echo "⚠️ No official build version found for product_line=$product_line version=$version build=$build. Use latest"
         build="latest"
     fi
+
+    if [ -n "$token" ]; then # take latest if possible 
+        version="main"
+        product_line="main"
+        build=$(jq -r '.official.main.main' "$VERSION_FILE")
+    fi
+
 fi
 
 if [ "$product_line" == "null" ] || [ "$version" == "null" ] || [ "$build" == "null" ]; then
