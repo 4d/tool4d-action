@@ -27,6 +27,9 @@ inputs:
   build:
     description: 'tool4d build number (default latest)'
     required: false
+  token:
+    description: 'if needed a token to download'
+    required: false
 outputs:
   tool4d:
     description: 'tool4d binary path.'
@@ -37,7 +40,7 @@ runs:
     - id: download
       name: ⬇️ Download tool4d
       shell: bash
-      run: bash ${GITHUB_ACTION_PATH}/download.sh "${{ inputs.product-line }}" "${{ inputs.version }}" "${{ inputs.build }}"
+      run: bash ${GITHUB_ACTION_PATH}/download.sh "${{ inputs.product-line }}" "${{ inputs.version }}" "${{ inputs.build }}" "${{ inputs.token }}"
     - id: run
       name: 🚀 Run code
       shell: bash

@@ -3,6 +3,7 @@
 product_line="$1"
 version="$2"
 build="$3"
+token="$4"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 VERSION_FILE="$SCRIPT_DIR/versions.json"
@@ -120,8 +121,21 @@ url=$( echo "$url" \
         -e 's/ /%20/g') # XXX could do more url encode if needed
 
 echo "⬇️  Download tool4d from $url" 
+
+if [ -n "$token" ]; then
+    url="$url?token=$token"
+fi
+
 curl --fail-with-body "$url" -o tool4d.tar.xz -sL
 status=$?
+
+if [[ $RUNNER_OS == 'macOS' ]]; then # todo: for other OS
+    type=$(file tool4d.tar.xz)
+    if [[ "$type" == *"HTML document"* ]]; then
+        >&2 echo "An HTML document has been downloaded. Maybe need to be authenticated or version do not exists"
+        status=403
+    fi
+fi
 
 if [[ "$status" -eq 0 ]]; then
     echo "📦 Unpack"
@@ -140,13 +154,6 @@ if  [[ -f "$tool4d_bin" ]]; then
     "$tool4d_bin" --version
 else
     >&2 echo "❌ Failed to unpack tool4d."
-    if [[ $RUNNER_OS == 'macOS' ]]; then
-        type=$(file tool4d.tar.xz)
-        if [[ "$type" == *"HTML document"* ]]; then
-            >&2 echo "An HTML document has been downloaded. Maybe need to be authenticated"
-        fi
-    fi
-
     exit 3
 fi
 
