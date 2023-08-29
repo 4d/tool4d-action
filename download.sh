@@ -59,14 +59,13 @@ if [[ "$build" == "official" ]]; then
         # XXX: if not found maybe look for previous version?
         >&2 echo "⚠️ No official build version found for product_line=$product_line version=$version build=$build. Use latest"
         build="latest"
-    fi
 
-    if [ -n "$token" ]; then # take latest if possible 
-        version="main"
-        product_line="main"
-        build=$(jq -r '.official.main.main' "$VERSION_FILE")
+        if [ -n "$token" ]; then # take latest if possible 
+            version="main"
+            product_line="main"
+            build=$(jq -r '.official.main.main' "$VERSION_FILE")
+        fi
     fi
-
 fi
 
 if [ "$product_line" == "null" ] || [ "$version" == "null" ] || [ "$build" == "null" ]; then
