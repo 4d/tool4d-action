@@ -22,7 +22,8 @@ if [[ "$product_line" == "vcs" ]] || [[ "$version" == "vcs" ]]; then
     if [[ -n "$GITHUB_BASE_REF" ]]; then
         git_branch="$GITHUB_BASE_REF" # pull request destination
     elif [[ -n "$GITHUB_REF" ]]; then
-        git_branch="$GITHUB_REF" # current branch
+        git_branch="$GITHUB_REF" # current branch, ex ref/head/main
+        git_branch="${git_branch##*/}"
     else
         git_branch=$(git rev-parse --abbrev-ref HEAD)
     fi
