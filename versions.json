@@ -13,10 +13,15 @@
         "product_line": "main",
         "version": "main",
         "build": "286970"
+      },
+      "20R3": {
+        "product_line": "main",
+        "version": "main",
+        "build": "287729"
       }
     },
     "main": {
-      "main": "287729"
+      "main": "288852"
     }
   }
 }
