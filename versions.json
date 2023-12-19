@@ -1,7 +1,7 @@
 {
   "default": {
     "product_line": "20.x",
-    "version": "20.1",
+    "version": "20.2",
     "build": "latest"
   },
   "official": {
@@ -14,14 +14,10 @@
         "version": "main",
         "build": "286970"
       },
-      "20R3": {
-        "product_line": "main",
-        "version": "main",
-        "build": "287729"
-      }
+      "20R3": "100178"
     },
     "main": {
-      "main": "288852"
+      "main": "	289564"
     }
   }
 }
