@@ -115,10 +115,12 @@ if [[ $RUNNER_OS == 'macOS' ]]; then
         arch="x86"
     fi
     url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_v"$version_in_name"_mac_$arch.tar.xz"
+    url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_mac_$arch.tar.xz"
     option=xJf
     tool4d_bin=./tool4d.app/Contents/MacOS/tool4d
 elif [[ $RUNNER_OS == 'Windows' ]]; then
     url="https://resources-download.4d.com/release/$product_line/$version/$build/win/tool4d_v"$version_in_name"_win.tar.xz"
+    url="https://resources-download.4d.com/release/$product_line/$version/$build/win/tool4d_win.tar.xz"
     option=xJf
     tool4d_bin=./tool4d/tool4d.exe
 else
