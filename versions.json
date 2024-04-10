@@ -15,8 +15,16 @@
         "build": "286970"
       },
       "20R3": "100178",
-      "20R4": "289564",
-      "20R5": "289494"
+      "20R4": {
+        "product_line": "main",
+        "version": "main",
+        "build": "289564"
+      },
+      "20R5": {
+        "product_line": "main",
+        "version": "main",
+        "build": "289494"
+      }
     },
     "main": {
       "main": "289494"
