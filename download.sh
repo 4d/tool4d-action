@@ -90,6 +90,8 @@ fi
 if [[ -z "$RUNNER_OS" ]]; then
     if [[ "$OSTYPE" == "darwin"* ]]; then
         RUNNER_OS="macOS"
+    elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        RUNNER_OS="Linux"
     elif [ "$OSTYPE" == "cygwin" ] || [ "$OSTYPE" == "msys" ] || [ "$OSTYPE" == "win32" ] ; then
         RUNNER_OS="Windows"
     fi
@@ -114,15 +116,20 @@ if [[ $RUNNER_OS == 'macOS' ]]; then
     else
         arch="x86"
     fi
-    url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_v"$version_in_name"_mac_$arch.tar.xz"
-    url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_mac_$arch.tar.xz"
+    # url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_v"$version_in_name"_mac_$arch.tar.xz" # maybe use that for old one? or  all renamed
+    # url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_mac_$arch.tar.xz"  # mac remove since xxx
+    url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_$arch.tar.xz"
     option=xJf
     tool4d_bin=./tool4d.app/Contents/MacOS/tool4d
 elif [[ $RUNNER_OS == 'Windows' ]]; then
-    url="https://resources-download.4d.com/release/$product_line/$version/$build/win/tool4d_v"$version_in_name"_win.tar.xz"
+    # url="https://resources-download.4d.com/release/$product_line/$version/$build/win/tool4d_v"$version_in_name"_win.tar.xz"
     url="https://resources-download.4d.com/release/$product_line/$version/$build/win/tool4d_win.tar.xz"
     option=xJf
     tool4d_bin=./tool4d/tool4d.exe
+elif [[ $RUNNER_OS == 'Linux' ]]; then
+    url="https://resources-download.4d.com/release/$product_line/$version/$build/linux/tool4d_Linux.tar.xz"
+    option=xJf
+    tool4d_bin=./bin/tool4d
 else
     >&2 echo "❌ Not supported runner OS: $RUNNER_OS"
     exit 1
@@ -144,7 +151,7 @@ fi
 curl --fail-with-body "$url" -o tool4d.tar.xz -sL
 status=$?
 
-if [[ $RUNNER_OS == 'macOS' ]]; then # todo: for other OS
+if [[ $RUNNER_OS == 'macOS'] || [ $RUNNER_OS == 'Linux']]; then # todo: for windows
     type=$(file tool4d.tar.xz)
     if [[ "$type" == *"HTML document"* ]]; then
         >&2 echo "An HTML document has been downloaded. Maybe need to be authenticated or version do not exists"
