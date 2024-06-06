@@ -173,8 +173,8 @@ if  [[ -f "$tool4d_bin" ]]; then
         # Intall dependencies
         # todo get a list from archive or maybe use .deb package
         # Depends: libc++1 (>= 10), libncurses5 (>= 6.2), libcap-ng0 (>= 0.7.9), uuid-runtime (>= 2.34), libbsd0 (>= 0.10), libfreeimage3 (>= 3.18), libsystemd0 (>= 245.4), xdg-user-dirs (>= 0.17)
-        apt-get update -y \
-        	&& apt-get install -y \
+        sudo apt-get update -y \
+        	&& sudo apt-get install -y \
         	libc++1 \
         	libc++abi1 \
         	libncurses5 \
