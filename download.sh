@@ -111,11 +111,7 @@ fi
 version_in_name=$(echo "$version_in_name" | sed 's/ //g')
 
 if [[ $RUNNER_OS == 'macOS' ]]; then
-    if [[ $(uname -m) == 'arm64' ]]; then
-        arch="arm"
-    else
-        arch="x86"
-    fi
+    arch=$(uname -m)
     # url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_v"$version_in_name"_mac_$arch.tar.xz" # maybe use that for old one? or  all renamed
     # url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_mac_$arch.tar.xz"  # mac remove since xxx
     url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_$arch.tar.xz"
