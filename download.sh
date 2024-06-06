@@ -151,7 +151,7 @@ fi
 curl --fail-with-body "$url" -o tool4d.tar.xz -sL
 status=$?
 
-if [[ $RUNNER_OS == 'macOS'] || [ $RUNNER_OS == 'Linux']]; then # todo: for windows
+if [ "$RUNNER_OS" == 'macOS' ] || [  "$RUNNER_OS" == 'Linux' ]; then # todo: for windows
     type=$(file tool4d.tar.xz)
     if [[ "$type" == *"HTML document"* ]]; then
         >&2 echo "An HTML document has been downloaded. Maybe need to be authenticated or version do not exists"
