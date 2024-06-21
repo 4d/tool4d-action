@@ -77,7 +77,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    - uses: e-marchand/tool4d-action@v2
+    - uses: 4d/tool4d-action@v2
       with:
         project: "*"
 ```
