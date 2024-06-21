@@ -4,22 +4,39 @@ This action install the wanted [tool4d](https://blog.4d.com/a-tool-for-4d-code-e
 
 ## Inputs
 
+### Choose the tool4d version
+
+The parametrised URL used to download too4d is: 
+> `https://resources-download.4d.com/release/<product-line>/<version>/<build>/<os>/tool4d_<os or arch>.tar.xz`
+
+#### `product-line`
+
+**Optional** tool4d product line (default defined [here](https://github.com/4d/tool4d-action/blob/main/versions.json), ex: `20.x`)
+
+#### `version`
+
+**Optional** tool4d version (default defined [here](https://github.com/4d/tool4d-action/blob/main/versions.json), ex: `20.3`)
+
+#### `build-method`
+
+**Optional** tool4d build number (default `latest`)
+
 ### Launch a project
 
-#### `project` (v1)
+#### `project`
 
 **Optional** The project file to run.
 
 - If equal to `*` action will try to find it automatically
 - If empty, nothing is run
 
-#### `startup-method` (v1)
+#### `startup-method`
 
 **Optional** The method to run at startup.
 
 - If not defined, standard database method will run
 
-#### `user-param` (v1)
+#### `user-param`
 
 **Optional** User parameters that could be acceded using 4D code:
 
@@ -29,30 +46,13 @@ var $startupParam: Text
 $r:=Get database parameter(User param value; $startupParam)
 ```
 
-#### `error-flag` (v1)
+#### `error-flag`
 
 **Optional** File used to check if there execution errors (default `error`). (see [Manage errors](#manage-errors))
 
-### Choose tool4d version (v1)
-
-The parametrised URL used to download too4d is: 
-> `https://resources-download.4d.com/release/<product-line>/<version>/<build>/win/tool4d_v<build>_<os>.tar.xz`
-
-#### `product-line` (v1)
-
-**Optional** tool4d product line (default `20.x`)
-
-#### `version` (v1)
-
-**Optional** tool4d version (default `20.0`)
-
-#### `build-method` (v1)
-
-**Optional** tool4d build number (default `latest`)
-
 ## Outputs
 
-### `tool4d` (v1)
+### `tool4d`
 
 tool4d binary path.
 
@@ -76,8 +76,8 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
-    - uses: e-marchand/tool4d-action@v1
+      uses: actions/checkout@v4
+    - uses: e-marchand/tool4d-action@v2
       with:
         project: "*"
 ```
@@ -99,8 +99,8 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
-    - uses: 4d/tool4d-action@v1
+      uses: actions/checkout@v4
+    - uses: 4d/tool4d-action@v2
       with:
         project: "*"
         startup-method: runUnitTests
@@ -134,8 +134,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
-    - uses: 4d/tool4d-action@v1
+      uses: actions/checkout@v4
+    - uses: 4d/tool4d-action@v2
       id: tool4d
       with:
         project: ${{ github.workspace }}/Project/Build4D_DF.4DProject
