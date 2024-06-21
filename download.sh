@@ -125,7 +125,7 @@ elif [[ $RUNNER_OS == 'Windows' ]]; then
 elif [[ $RUNNER_OS == 'Linux' ]]; then
     url="https://resources-download.4d.com/release/$product_line/$version/$build/linux/tool4d_Linux.tar.xz"
     option=xJf
-    tool4d_bin=./bin/tool4d
+    tool4d_bin=./tool4d/bin/tool4d
 else
     >&2 echo "❌ Not supported runner OS: $RUNNER_OS"
     exit 1
@@ -157,7 +157,18 @@ fi
 
 if [[ "$status" -eq 0 ]]; then
     echo "📦 Unpack"
-    tar $option tool4d.tar.xz
+    
+    if [[ $RUNNER_OS == 'Linux' ]]; then
+        mkdir -p tool4d
+        cd tool4d
+        mv ../tool4d.tar.xz .
+        tar $option tool4d.tar.xz
+        rm tool4d.tar.xz
+        cd ..
+    else
+        tar $option tool4d.tar.xz
+        rm tool4d.tar.xz
+    fi
 else
     >&2 echo "❌ Failed to download with status $status"
     exit 2
