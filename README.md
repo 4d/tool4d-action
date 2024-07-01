@@ -6,55 +6,33 @@ This action install the wanted [tool4d](https://blog.4d.com/a-tool-for-4d-code-e
 
 ### Choose the tool4d version
 
-The parametrised URL used to download too4d is: 
+The parametrised URL used to download the tool4d is: 
 > `https://resources-download.4d.com/release/<product-line>/<version>/<build>/<os>/tool4d_<os or arch>.tar.xz`
 
-#### `product-line`
-
-**Optional** tool4d product line (default defined [here](https://github.com/4d/tool4d-action/blob/main/versions.json), ex: `20.x`)
-
-#### `version`
-
-**Optional** tool4d version (default defined [here](https://github.com/4d/tool4d-action/blob/main/versions.json), ex: `20.3`)
-
-#### `build-method`
-
-**Optional** tool4d build number (default `latest`)
+- `product-line`: tool4d product line (default defined [here](https://github.com/4d/tool4d-action/blob/main/versions.json), ex: `20.x`)
+- `version`: tool4d version (default defined [here](https://github.com/4d/tool4d-action/blob/main/versions.json), ex: `20.3`)
+- `build-method`: tool4d build number (default `latest`)
 
 ### Launch a project
 
-#### `project`
-
-**Optional** The project file to run.
-
-- If equal to `*` action will try to find it automatically
-- If empty, nothing is run
-
-#### `startup-method`
-
-**Optional** The method to run at startup.
-
-- If not defined, standard database method will run
-
-#### `user-param`
-
-**Optional** User parameters that could be acceded using 4D code:
-
+- `project`: The project file to run.
+  - If equal to `*` action will try to find it automatically
+  - If empty, nothing is run
+- `startup-method` The method to run at startup.
+  - If not defined, standard database method will run
+- `user-param` User parameters that could be acceded using 4D code:
+  
 ```4d
 var $r : Real
 var $startupParam: Text
 $r:=Get database parameter(User param value; $startupParam)
 ```
 
-#### `error-flag`
-
-**Optional** File used to check if there execution errors (default `error`). (see [Manage errors](#manage-errors))
+- `error-flag`: File used to check if there execution errors (default `error`). (see [Manage errors](#manage-errors))
 
 ## Outputs
 
-### `tool4d`
-
-tool4d binary path.
+- `tool4d`: tool4d binary path.
 
 ## Example
 
@@ -145,3 +123,13 @@ jobs:
 ## Manage errors
 
 Create an `error` file in current working directory to notify action of some failures. (4D code do not allow to exit/quit with a specific exit code)
+
+## Run on your own runner
+
+GitHub runner have a lot of tools pre-installed. You could see some description in [this repository](https://github.com/actions/runner-images/tree/main/images/windows)
+
+On Window you will need in your PATH
+- bash (install Git Bash
+- tar
+- curl 
+- jq
