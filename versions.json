@@ -20,10 +20,20 @@
         "version": "main",
         "build": "289564"
       },
-      "20R5": "100153"
+      "20R5": "100153",
+      "20R6": {
+        "product_line": "main",
+        "version": "main",
+        "build": "291838"
+      },
+      "20R7": {
+        "product_line": "main",
+        "version": "main",
+        "build": "292828"
+      }
     },
     "main": {
-      "main": "292221"
+      "main": "292828"
     }
   }
 }
