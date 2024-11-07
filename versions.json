@@ -26,11 +26,7 @@
         "version": "main",
         "build": "291838"
       },
-      "20R7": {
-        "product_line": "main",
-        "version": "main",
-        "build": "292828"
-      }
+      "20R7": "100121"
     },
     "main": {
       "main": "293889"
