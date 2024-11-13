@@ -184,11 +184,18 @@ if  [[ -f "$tool4d_bin" ]]; then
         # Intall dependencies
         # todo get a list from archive or maybe use .deb package
         # Depends: libc++1 (>= 10), libncurses5 (>= 6.2), libcap-ng0 (>= 0.7.9), uuid-runtime (>= 2.34), libbsd0 (>= 0.10), libfreeimage3 (>= 3.18), libsystemd0 (>= 245.4), xdg-user-dirs (>= 0.17)
+        UBUNTU_VERSION=$(lsb_release -sr)
+
+        libncurses="libncurses5"
+        if (( $(echo "$UBUNTU_VERSION >= 24.04" | bc -l) )); then
+            libncurses="libncurses6"
+        fi
+
         sudo apt-get update -y \
         	&& sudo apt-get install -y \
         	libc++1 \
         	libc++abi1 \
-        	libncurses5 \
+        	$libncurses \
         	libcap-ng0 \
         	uuid-runtime \
         	libbsd0  \
