@@ -32,6 +32,9 @@ if [[ "$product_line" == "vcs" ]] || [[ "$version" == "vcs" ]]; then
     if [ "$git_branch" == "main" ]; then
         product_line="$git_branch"
         version="$git_branch"
+    elif [[ $git_branch =~ ^[0-9]+\.[xX]$ ]]; then
+        product_line="$git_branch"
+        version=$(echo "$git_branch" | sed -E 's/^([0-9]+)\..*/\1/')
     else
         version="$git_branch"
         product_line=$(echo "$version" | sed -r 's/([0-9]*).*/\1Rx/g')
@@ -113,8 +116,13 @@ version_in_name=$(echo "$version_in_name" | sed 's/ //g')
 if [[ $RUNNER_OS == 'macOS' ]]; then
     arch=$(uname -m)
     # url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_v"$version_in_name"_mac_$arch.tar.xz" # maybe use that for old one? or  all renamed
-    # url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_mac_$arch.tar.xz"  # mac remove since xxx
-    url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_$arch.tar.xz"
+    if [[ "$product_line" == "20.x" && "$version" == "20" ]]; then
+        arch=${arch//_64/}
+        arch=${arch//64/} 
+        url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_mac_$arch.tar.xz"  # mac remove since xxx
+    else
+        url="https://resources-download.4d.com/release/$product_line/$version/$build/mac/tool4d_$arch.tar.xz"
+    fi
     option=xJf
     tool4d_bin=./tool4d.app/Contents/MacOS/tool4d
 elif [[ $RUNNER_OS == 'Windows' ]]; then
