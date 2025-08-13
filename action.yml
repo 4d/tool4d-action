@@ -34,6 +34,9 @@ outputs:
   tool4d:
     description: 'tool4d binary path.'
     value: ${{ steps.download.outputs.tool4d }}
+  project:
+    description: 'Final project path used for execution.'
+    value: ${{ steps.run.outputs.project }}
 runs:
   using: 'composite'
   steps:

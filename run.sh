@@ -23,6 +23,11 @@ if  [[ ! -f "$project" ]]; then
     exit 1
 fi
 
+# Output the final project path for GitHub Actions
+if [[ ! -z "$GITHUB_OUTPUT" ]]; then
+    echo "project=$project" >> "$GITHUB_OUTPUT"
+fi
+
 if [[ -z "$error_flag" ]]; then
     error_flag="error"
 fi
