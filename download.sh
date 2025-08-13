@@ -22,8 +22,22 @@ if [[ "$product_line" == "vcs" ]] || [[ "$version" == "vcs" ]]; then
     if [[ -n "$GITHUB_BASE_REF" ]]; then
         git_branch="$GITHUB_BASE_REF" # pull request destination
     elif [[ -n "$GITHUB_REF" ]]; then
-        git_branch="$GITHUB_REF" # current branch, ex ref/head/main
-        git_branch="${git_branch##*/}"
+        # Handle different types of refs
+        if [[ "$GITHUB_REF" == refs/heads/* ]]; then
+            # Branch reference: refs/heads/main -> main
+            git_branch="${GITHUB_REF#refs/heads/}"
+        elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            # Tag reference: try to get the branch from git
+            echo "Detected tag reference: $GITHUB_REF"
+            if command -v git >/dev/null 2>&1; then
+                git_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || git_branch="main"
+            else
+                git_branch="main"
+            fi
+        else
+            # Fallback: strip everything before the last /
+            git_branch="${GITHUB_REF##*/}"
+        fi
     else
         git_branch=$(git rev-parse --abbrev-ref HEAD)
     fi
