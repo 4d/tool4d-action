@@ -29,8 +29,22 @@ if [[ "$product_line" == "vcs" ]] || [[ "$version" == "vcs" ]]; then
         elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
             # Tag reference: try to get the branch from git
             echo "Detected tag reference: $GITHUB_REF"
+            tag_name="${GITHUB_REF#refs/tags/}"
             if command -v git >/dev/null 2>&1; then
-                git_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null) || git_branch="main"
+                # Try to find which branch contains this tag
+                # First, try to get branches that contain this tag, preferring main/master
+                git_branch=$(git branch -r --contains "$tag_name" 2>/dev/null | grep -E "(origin/main|origin/master)" | head -1 | sed 's/.*origin\///' | tr -d ' ')
+                if [[ -z "$git_branch" ]]; then
+                    # If no main/master found, get the first branch that contains the tag
+                    git_branch=$(git branch -r --contains "$tag_name" 2>/dev/null | head -1 | sed 's/.*origin\///' | tr -d ' ')
+                fi
+                # Ensure we found a valid branch
+                if [[ -z "$git_branch" ]]; then
+                    >&2 echo "❌ Unable to determine branch from tag: $tag_name"
+                    git_branch="main"
+                else
+                    echo "Found git branch from tag: $git_branch"
+                fi
             else
                 git_branch="main"
             fi
