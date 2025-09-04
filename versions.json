@@ -32,6 +32,11 @@
         "product_line": "main",
         "version": "main",
         "build": "295388"
+      },
+      "20R10": {
+        "product_line": "main",
+        "version": "main",
+        "build": "296761"
       }
     },
     "main": {
