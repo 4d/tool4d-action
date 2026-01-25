@@ -1,7 +1,7 @@
 {
   "default": {
-    "product_line": "20.x",
-    "version": "20.5",
+    "product_line": "21.x",
+    "version": "21.0",
     "build": "latest"
   },
   "official": {
