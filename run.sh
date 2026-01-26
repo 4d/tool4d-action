@@ -18,6 +18,9 @@ if [[ "$project" == "*" ]]; then
     echo "$project"
 fi
 
+# Sanitize path: remove /./ sequences
+project=$(echo "$project" | sed 's|/\./|/|g')
+
 if  [[ ! -f "$project" ]]; then
     >&2 echo "❌ project $project seems to not exist and could not be run"
     exit 1
