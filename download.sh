@@ -74,7 +74,9 @@ fi
 
 if [[ "$build" == "official" ]]; then
 
-    curl -sL -f https://raw.githubusercontent.com/4d/tool4d-action/main/versions.json -o "$VERSION_FILE" 2>/dev/null || true
+    if [[ -z "$TOOL4D_LOCAL" ]]; then
+        curl -sL -f https://raw.githubusercontent.com/4d/tool4d-action/main/versions.json -o "$VERSION_FILE" 2>/dev/null || true
+    fi
 
     build=$(jq -r '.official."'$product_line'"."'$version'"|type=="object"' "$VERSION_FILE")
     if [ "$build" == "true" ]; then
