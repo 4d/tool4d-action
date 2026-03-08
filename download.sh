@@ -7,6 +7,7 @@ token="$4"
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 VERSION_FILE="$SCRIPT_DIR/versions.json"
+source "$SCRIPT_DIR/macos-crash-diagnostics.sh"
 
 if [[ -z "$product_line" ]]; then
     product_line=$(jq -r .default.product_line "$VERSION_FILE")
@@ -245,7 +246,11 @@ if  [[ -f "$tool4d_bin" ]]; then
         	unzip
     fi
 
+    tool4d_capture_crash_reports
     "$tool4d_bin" --version
+    exit_code=$?
+    tool4d_print_segfault_diagnostics "$exit_code" "$tool4d_bin" "download verification"
+    exit "$exit_code"
 else
     >&2 echo "❌ Failed to unpack tool4d."
     exit 3

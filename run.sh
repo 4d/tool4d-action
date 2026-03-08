@@ -7,6 +7,9 @@ tool4d_bin="$4"
 user_param="$5"
 workspace="$6"
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+source "$SCRIPT_DIR/macos-crash-diagnostics.sh"
+
 if [[ -z "$project" ]]; then # TODO: instead create a new step with condition if:  github.event.inputs.project != ''
     echo "💡 Define a project to run or use tool4d binary" 
     exit 0
@@ -51,12 +54,14 @@ if [[ ! -z "$user_param" ]]; then
     echo "➡️ $user_param"
 fi
 
+tool4d_capture_crash_reports
 if [[ -z "$startup_method" ]]; then
     "$tool4d_bin" --project "$project" $options --user-param "$user_param"
 else
     "$tool4d_bin" --project "$project" $options --user-param "$user_param" --skip-onstartup --startup-method "$startup_method" # TODO: do only one call (but parsing failed of arg...)
 fi
 exit_code=$?
+tool4d_print_segfault_diagnostics "$exit_code" "$tool4d_bin" "project execution"
 
 echo "...end running code ($exit_code)"
 
