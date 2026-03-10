@@ -24,6 +24,35 @@ tool4d_cleanup_crash_reports() {
     fi
 }
 
+tool4d_wait_for_crash_report() {
+    local baseline_snapshot="$1"
+    local current_snapshot="$2"
+    local diag_user="$HOME/Library/Logs/DiagnosticReports"
+    local diag_sys="/Library/Logs/DiagnosticReports"
+    local wait_seconds="${TOOL4D_CRASH_REPORT_WAIT_SECONDS:-8}"
+    local waited=0
+
+    while (( waited < wait_seconds )); do
+        find "$diag_user" "$diag_sys" -type f \( -name '*.crash' -o -name '*.ips' \) -print 2>/dev/null | sort > "$current_snapshot" || true
+
+        if [[ -n "$baseline_snapshot" && -f "$baseline_snapshot" ]]; then
+            if comm -13 "$baseline_snapshot" "$current_snapshot" | grep -q .; then
+                return 0
+            fi
+        fi
+
+        if find "$diag_user" "$diag_sys" -type f \( -name '*.crash' -o -name '*.ips' \) -mmin -10 2>/dev/null | grep -q .; then
+            return 0
+        fi
+
+        sleep 1
+        ((waited += 1))
+    done
+
+    find "$diag_user" "$diag_sys" -type f \( -name '*.crash' -o -name '*.ips' \) -print 2>/dev/null | sort > "$current_snapshot" || true
+    return 1
+}
+
 tool4d_print_segfault_diagnostics() {
     local exit_code="$1"
     local tool4d_bin="$2"
@@ -49,7 +78,8 @@ tool4d_print_segfault_diagnostics() {
     echo "=== macOS crash reports generated recently ==="
     local current_snapshot
     current_snapshot=$(mktemp "${TMPDIR:-/tmp}/tool4d-crash-reports-current.XXXXXX")
-    find "$diag_user" "$diag_sys" -type f \( -name '*.crash' -o -name '*.ips' \) -print 2>/dev/null | sort > "$current_snapshot" || true
+    echo "Waiting up to ${TOOL4D_CRASH_REPORT_WAIT_SECONDS:-8}s for crash reports to be written..."
+    tool4d_wait_for_crash_report "${TOOL4D_CRASH_SNAPSHOT:-}" "$current_snapshot" || true
 
     local printed=0
     while IFS= read -r report; do
