@@ -86,7 +86,7 @@ tool4d_print_segfault_diagnostics() {
         [[ -n "$report" ]] || continue
         printed=1
         echo "--- $report ---"
-        sed -n '1,220p' "$report" || true
+        cat "$report" || true
     done < <(
         if [[ -n "${TOOL4D_CRASH_SNAPSHOT:-}" && -f "${TOOL4D_CRASH_SNAPSHOT}" ]]; then
             comm -13 "$TOOL4D_CRASH_SNAPSHOT" "$current_snapshot"
@@ -98,7 +98,7 @@ tool4d_print_segfault_diagnostics() {
             [[ -n "$report" ]] || continue
             printed=1
             echo "--- $report ---"
-            sed -n '1,220p' "$report" || true
+            cat "$report" || true
         done < <(find "$diag_user" "$diag_sys" -type f \( -name '*.crash' -o -name '*.ips' \) -mmin -10 2>/dev/null | sort)
     fi
 
