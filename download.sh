@@ -247,8 +247,27 @@ if  [[ -f "$tool4d_bin" ]]; then
     fi
 
     tool4d_capture_crash_reports
-    "$tool4d_bin" --version
-    exit_code=$?
+
+    if [[ "$RUNNER_OS" == "Windows" ]]; then
+        max_retries=3
+        retry=0
+        exit_code=1
+        while [[ "$retry" -lt "$max_retries" && "$exit_code" -ne 0 ]]; do
+            "$tool4d_bin" --version
+            exit_code=$?
+            if [[ "$exit_code" -ne 0 ]]; then
+                retry=$((retry + 1))
+                if [[ "$retry" -lt "$max_retries" ]]; then
+                    echo "⚠️ --version exited with code $exit_code, retrying ($retry/$max_retries)..."
+                    sleep 2
+                fi
+            fi
+        done
+    else
+        "$tool4d_bin" --version
+        exit_code=$?
+    fi
+
     tool4d_print_segfault_diagnostics "$exit_code" "$tool4d_bin" "download verification"
     exit "$exit_code"
 else
