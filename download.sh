@@ -9,6 +9,33 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 VERSION_FILE="$SCRIPT_DIR/versions.json"
 source "$SCRIPT_DIR/macos-crash-diagnostics.sh"
 
+# Resolve the download token from a safe source when it is not passed on the
+# command line. The command-line argument ($4) always takes precedence so that
+# an explicit token wins. Fallbacks (in order) keep the secret out of the
+# process arguments / CI command line:
+#   1. TOOL4D_TOKEN            environment variable
+#   2. TOOL4D_TOKEN_FILE       path to a file containing only the token
+#   3. .env file              (script dir, then current dir) with TOOL4D_TOKEN=...
+if [[ -z "$token" ]]; then
+    if [[ -n "$TOOL4D_TOKEN" ]]; then
+        token="$TOOL4D_TOKEN"
+    elif [[ -n "$TOOL4D_TOKEN_FILE" && -f "$TOOL4D_TOKEN_FILE" ]]; then
+        token=$(tr -d '\r\n' < "$TOOL4D_TOKEN_FILE")
+    else
+        for env_file in "$SCRIPT_DIR/.env" ".env"; do
+            [[ -f "$env_file" ]] || continue
+            env_token=$(grep -E '^[[:space:]]*(export[[:space:]]+)?TOOL4D_TOKEN=' "$env_file" | tail -n1 | sed -E 's/^[[:space:]]*(export[[:space:]]+)?TOOL4D_TOKEN=//')
+            # Strip optional surrounding quotes.
+            env_token="${env_token%\"}"; env_token="${env_token#\"}"
+            env_token="${env_token%\'}"; env_token="${env_token#\'}"
+            if [[ -n "$env_token" ]]; then
+                token="$env_token"
+                break
+            fi
+        done
+    fi
+fi
+
 if [[ -z "$product_line" ]]; then
     product_line=$(jq -r .default.product_line "$VERSION_FILE")
 fi
