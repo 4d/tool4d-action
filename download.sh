@@ -58,7 +58,12 @@ if [[ "$product_line" == "vcs" ]] || [[ "$version" == "vcs" ]]; then
             # Tag reference: try to get the branch from git
             echo "Detected tag reference: $GITHUB_REF"
             tag_name="${GITHUB_REF#refs/tags/}"
-            if command -v git >/dev/null 2>&1; then
+            if [[ "$tag_name" =~ ^[vV]?([0-9]+R[0-9]+)([.-].*)?$ ]]; then
+                # Tag named after a 4D release, with optional patch/prerelease suffix:
+                # 21R5, 21R5.1, 21R5.1-beta, v21R5-rc1 -> 21R5
+                git_branch="${BASH_REMATCH[1]}"
+                echo "Found version from tag: $git_branch"
+            elif command -v git >/dev/null 2>&1; then
                 # Try to find which branch contains this tag
                 # First, try to get branches that contain this tag, preferring main/master
                 git_branch=$(git branch -r --contains "$tag_name" 2>/dev/null | grep -E "(origin/main|origin/master)" | head -1 | sed 's/.*origin\///' | tr -d ' ')
