@@ -46,6 +46,35 @@ if [[ -z "$build" ]]; then
     build=$(jq -r .default.build "$VERSION_FILE")
 fi
 
+is_version_branch() {
+    [[ "$1" == "main" || "$1" =~ ^[0-9]+\.[xX]$ || "$1" =~ ^[0-9]+R[0-9]+$ ]]
+}
+
+# Destination branch of an open pull request whose head is $1 (GitHub only).
+pr_base_branch() {
+    local branch="$1" repo="$GITHUB_REPOSITORY" api_token="${GITHUB_TOKEN:-$GH_TOKEN}" owner
+    [[ -n "$repo" ]] || return 0
+    command -v jq >/dev/null 2>&1 || return 0
+    owner="${repo%%/*}"
+    local auth=()
+    [[ -n "$api_token" ]] && auth=(-H "Authorization: Bearer $api_token")
+    curl -sfL --max-time 10 "${auth[@]}" -H "Accept: application/vnd.github+json" -G \
+        --data-urlencode "head=$owner:$branch" --data-urlencode "state=open" \
+        "${GITHUB_API_URL:-https://api.github.com}/repos/$repo/pulls" 2>/dev/null \
+        | jq -r 'if type=="array" then (.[0].base.ref // empty) else empty end' 2>/dev/null
+}
+
+# Last version-like segment of a branch name: integrate/ACI0106575/21.x -> 21.x
+version_segment() {
+    local IFS='/' segment found=""
+    for segment in $1; do
+        if is_version_branch "$segment"; then
+            found="$segment"
+        fi
+    done
+    echo "$found"
+}
+
 if [[ "$product_line" == "vcs" ]] || [[ "$version" == "vcs" ]]; then
     if [[ -n "$GITHUB_BASE_REF" ]]; then
         git_branch="$GITHUB_BASE_REF" # pull request destination
@@ -89,6 +118,24 @@ if [[ "$product_line" == "vcs" ]] || [[ "$version" == "vcs" ]]; then
         git_branch=$(git rev-parse --abbrev-ref HEAD)
     fi
     echo "git branch=$git_branch"
+
+    # Not a version branch (e.g. a push on "integrate/ACI0106575/21.x"):
+    # use the branch it will be merged into.
+    if ! is_version_branch "$git_branch"; then
+        target_branch=$(pr_base_branch "$git_branch")
+        if [[ -n "$target_branch" ]]; then
+            echo "Found pull request destination branch: $target_branch"
+        else
+            target_branch=$(version_segment "$git_branch")
+            if [[ -n "$target_branch" ]]; then
+                echo "Found version in branch name: $target_branch"
+            fi
+        fi
+        if [[ -n "$target_branch" ]]; then
+            git_branch="$target_branch"
+            echo "git branch=$git_branch"
+        fi
+    fi
 
     if [ "$git_branch" == "main" ]; then
         product_line="$git_branch"
