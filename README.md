@@ -13,6 +13,8 @@ The parametrised URL used to download the tool4d is:
 - `version`: tool4d version (default defined [here](https://github.com/4d/tool4d-action/blob/main/versions.json), ex: `20.3`)
 - `build-method`: tool4d build number (default `latest`)
 
+Use `vcs` as `product-line`/`version` to pick the tool4d matching the git branch (`main`, `21.x`, `21R5`...). On a pull request the destination branch is used. On a push to another branch (ex: `integrate/ACI0106575/21.x`), the destination branch of its open pull request is used, or else the last version-like segment of the branch name.
+
 ### Launch a project
 
 - `project`: The project file to run.

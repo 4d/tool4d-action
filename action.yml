@@ -43,6 +43,8 @@ runs:
     - id: download
       name: ⬇️ Download tool4d
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
       run: bash ${GITHUB_ACTION_PATH}/download.sh "${{ inputs.product-line }}" "${{ inputs.version }}" "${{ inputs.build }}" "${{ inputs.token }}"
     - id: run
       name: 🚀 Run code
